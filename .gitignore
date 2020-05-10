@@ -19,3 +19,10 @@
 
 # Documentation
 doc/
+
+#VS Code 
+.vscode
+
+# macOS's
+.DS_Store
+
