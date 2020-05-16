@@ -9,6 +9,7 @@
  * The buffer size must be a power of two.
 */
 #define RING_BUFFER_SIZE 128
+#define RING_BUFFER_CONTAINER_SIZE RING_BUFFER_SIZE-1
 
 #if (RING_BUFFER_SIZE & (RING_BUFFER_SIZE - 1)) != 0
 #error "RING_BUFFER_SIZE must be a power of two"
@@ -40,7 +41,7 @@ typedef struct ring_buffer_t ring_buffer_t;
  * as well as metadata for the ring buffer.
  */
 struct ring_buffer_t {
-  char buffer[RING_BUFFER_SIZE]; /** Buffer memory. */
+  uint8_t buffer[RING_BUFFER_SIZE]; /** Buffer memory. */
   ring_buffer_size_t tail_index; /** Index of tail. */
   ring_buffer_size_t head_index; /** Index of head. */
 };
@@ -87,6 +88,15 @@ void put_arr(const char *data, ring_buffer_size_t size);
 uint8_t get(char *data);
 
 /**
+ * OVERLOAD
+ * Returns the oldest byte in a ring buffer.
+ * @param buffer The buffer from which the data should be returned.
+ * @return the oldest byte in a ring buffer.
+ */
+uint8_t get();
+
+
+/**
  * Returns the <em>len</em> oldest bytes in a ring buffer.
  * @param buffer The buffer from which the data should be returned.
  * @param data A pointer to the array at which the data should be placed.
@@ -120,6 +130,7 @@ inline uint8_t is_empty() {
  */
 inline uint8_t is_full() {
   return ((buffer.head_index - buffer.tail_index) & RING_BUFFER_MASK) == RING_BUFFER_MASK;
+  // return ((buffer.head_index - buffer.tail_index) & RING_BUFFER_SIZE) == RING_BUFFER_SIZE;
 }
 
 /**
@@ -130,6 +141,23 @@ inline uint8_t is_full() {
     inline ring_buffer_size_t num_items() {
     return ((buffer.head_index - buffer.tail_index) & RING_BUFFER_MASK);
     }
+
+/**
+ * Moves tail pointer in a ring buffer
+ * @param count The number of items should be moved.
+ */
+  void move_tail_pointer(ring_buffer_size_t count) {
+     buffer.tail_index = (buffer.tail_index + count) & RING_BUFFER_MASK;
+  }
+
+/**
+ * Returns current data pointer.
+ */
+  uint8_t* get_current_data_pointer() {
+    return &buffer.buffer[buffer.tail_index];// = ((buffer.tail_index + 1) & RING_BUFFER_MASK);
+  }
+
+
 
 };
 

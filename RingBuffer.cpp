@@ -47,6 +47,18 @@ uint8_t Ring_Buffer::get(char *data) {
   return 1;
 }
 
+uint8_t Ring_Buffer::get() {
+  if(is_empty()) {
+    /* No items */
+    return 0;
+  }
+  
+  uint8_t data = buffer.buffer[buffer.tail_index];
+  buffer.tail_index = ((buffer.tail_index + 1) & RING_BUFFER_MASK);
+
+  return data;
+}
+
 ring_buffer_size_t Ring_Buffer::get_arr(char *data, ring_buffer_size_t len) {
   if(is_empty()) {
     /* No items */

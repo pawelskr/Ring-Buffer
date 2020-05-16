@@ -26,3 +26,5 @@ doc/
 # macOS's
 .DS_Store
 
+# cmake
+/build
